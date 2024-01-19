@@ -3,10 +3,27 @@ import random
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from django.core.mail import send_mail
 
+from config.settings import EMAIL_HOST_USER
 from apps.tests.models import Tests, Answers
 from apps.tests.serializers import GetTestsSerializer, CheckAnswersSerializer
 from apps.users.permissions import UserPermission
+
+
+def send_test_for_email(full_name: str, tr: int, fl: int):
+    send_mail(
+        subject=f"{full_name} worked the test.",
+        message=f"""
+{full_name}'s results        
+
+number of questions: {tr + fl}
+correct questions : {tr}
+wrong questions : {fl}""",
+        from_email=EMAIL_HOST_USER,
+        recipient_list=["muhammadnurnigmatovich@gmail.com"],
+        fail_silently=False,
+    )
 
 
 class GetTestView(GenericAPIView):
@@ -24,15 +41,14 @@ class GetTestView(GenericAPIView):
                     tr += 1
                 elif v is False:
                     fl += 1
-                else:
-                    request.user.step.pop(k)
+            send_test_for_email(tr=tr, fl=fl, full_name=request.user.full_name)
             request.user.step = {}
             request.user.save()
             return Response(data={
                 "message": "You have completed all the tests for this topic.",
                 "number_of_questions": tr + fl,
-                "true_questions": tr,
-                "false_questions": fl,
+                "correct_questions": tr,
+                "wrong_questions": fl,
             },
                 status=status.HTTP_404_NOT_FOUND)
         random_test = random.choice(available_tests)
@@ -79,12 +95,13 @@ class EndTestView(GenericAPIView):
                 tr += 1
             elif v is False:
                 fl += 1
+        send_test_for_email(tr=tr, fl=fl, full_name=request.user.full_name)
         request.user.step = {}
         request.user.save()
         return Response(data={
-            "message": "You have completed all the tests for this topic.",
+            "message": "You have completed tests.",
             "number_of_questions": tr + fl,
-            "true_questions": tr,
-            "false_questions": fl,
+            "correct_questions": tr,
+            "wrong_questions": fl,
         },
             status=status.HTTP_404_NOT_FOUND)

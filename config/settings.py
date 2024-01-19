@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4g$b8c$^ndraimcbo#u(j%%ulvo8u%#z3s_w-lb)j+y805kh&r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["80.90.188.204", '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["80.90.188.204", '127.0.0.1']
 
 # Application definition
 
@@ -162,3 +162,10 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600),
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'muhammadnurpdp@gmail.com'
+EMAIL_HOST_PASSWORD = 'nvdi brrh qzaa bnib'

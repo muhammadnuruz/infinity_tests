@@ -8,14 +8,18 @@ class AnswersInline(admin.StackedInline):
 
 
 class TestsAdmin(admin.ModelAdmin):
-    list_display = ('question', 'topic', 'created_at', 'updated_at')
+    list_display = ('question', 'topic', 'created_at')
     list_filter = ('topic', 'created_at')
+    search_fields = ('question',)
+    ordering = ('question', 'topic')
     inlines = [AnswersInline]
 
 
 class AnswersAdmin(admin.ModelAdmin):
-    list_display = ('answer', 'is_correct', 'test', 'created_at', 'updated_at')
+    list_display = ('answer', 'is_correct', 'test', 'created_at')
     list_filter = ('test', 'is_correct', 'created_at')
+    search_fields = ('answer',)
+    ordering = ('answer', 'test')
 
 
 admin.site.register(Tests, TestsAdmin)
