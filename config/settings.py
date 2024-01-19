@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import datetime
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +25,7 @@ SECRET_KEY = 'django-insecure-4g$b8c$^ndraimcbo#u(j%%ulvo8u%#z3s_w-lb)j+y805kh&r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["80.90.188.204", '127.0.0.1']
+ALLOWED_HOSTS = ["80.90.188.204", '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'apps.users',
+    # 'apps.groups',
     'apps.tests',
     'apps.topics',
 ]
