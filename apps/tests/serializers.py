@@ -1,3 +1,5 @@
+import random
+
 from apps.tests.models import Tests, Answers
 from rest_framework import serializers
 
@@ -26,5 +28,7 @@ class GetTestsSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['topic'] = instance.topic.name
-        representation['answers'] = GetTestAnswerSerializer(instance.answers.all(), many=True).data
+        data = GetTestAnswerSerializer(instance.answers.all(), many=True).data
+        random.shuffle(data)
+        representation['answers'] = data
         return representation

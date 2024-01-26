@@ -1,10 +1,11 @@
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
+
 from apps.topics.serializers import ListTopicsSerializer
 from apps.topics.models import Topics
-from apps.users.permissions import UserPermission
 
 
 class TopicsListView(ListAPIView):
     queryset = Topics.objects.all()
     serializer_class = ListTopicsSerializer
-    permission_classes = [UserPermission]
+    permission_classes = [AllowAny]

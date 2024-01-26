@@ -21,7 +21,7 @@ number of questions: {tr + fl}
 correct questions : {tr}
 wrong questions : {fl}""",
         from_email=EMAIL_HOST_USER,
-        recipient_list=["muhammadnurnigmatovich@gmail.com"],
+        recipient_list=["tulaganow@gmail.com"],
         fail_silently=False,
     )
 
@@ -73,7 +73,7 @@ class SubmitAnswerView(GenericAPIView):
                 test_id = k
                 break
         if not test_id:
-            return Response(data={"message": "No active test found or all tests completed."},
+            return Response(data={"message": "No active test found."},
                             status=status.HTTP_400_BAD_REQUEST)
         correct_answers = Answers.objects.filter(test_id=test_id, is_correct=True)
         is_correct = any(user_answer == answer.answer for answer in correct_answers)
@@ -82,7 +82,7 @@ class SubmitAnswerView(GenericAPIView):
         if is_correct:
             return Response(data={"message": "Correct answer!"}, status=status.HTTP_200_OK)
         else:
-            return Response(data={"message": "Wrong answer, try again!"}, status=status.HTTP_200_OK)
+            return Response(data={"message": "Wrong answer!"}, status=status.HTTP_200_OK)
 
 
 class EndTestView(GenericAPIView):
