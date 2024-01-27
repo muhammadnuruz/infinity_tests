@@ -12,7 +12,7 @@ document.getElementById('login').addEventListener('click', function() {
     }
 
     // Token olish uchun so'rov
-    fetch('http://16.171.162.86:8000/api/auth/token/', {
+    fetch('http://127.0.0.1:8000/api/auth/token/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ document.getElementById('login').addEventListener('click', function() {
 
 function loadTopics() {
     // Mavzularni yuklash uchun so'rov
-    fetch('http://16.171.162.86:8000/api/topics/', {
+    fetch('http://127.0.0.1:8000/api/topics/', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -64,7 +64,7 @@ function loadTopics() {
 }
 
 function loadQuestionsForTopic(topicId) {
-  fetch(`http://16.171.162.86:8000/api/tests/get_test/${topicId}`, {
+  fetch(`http://127.0.0.1:8000/api/tests/get_test/${topicId}`, {
       method: 'GET',
       headers: {
           'Authorization': `Bearer ${token}`,
@@ -104,7 +104,7 @@ function handleQuestionsAndAnswers(data) {
 
 function submitAnswer(answer) {
   // Javobni yuborish uchun so'rov
-  fetch('http://16.171.162.86:8000/api/tests/submit_answer/', {
+  fetch('http://127.0.0.1:8000/api/tests/submit_answer/', {
       method: 'POST',
       headers: {
           'Authorization': `Bearer ${token}`,
