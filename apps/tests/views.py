@@ -18,8 +18,8 @@ def send_test_for_email(full_name: str, tr: int, fl: int):
 {full_name}'s results        
 
 number of questions: {tr + fl}
-correct questions : {tr}
-wrong questions : {fl}""",
+correct answers : {tr}
+wrong answers : {fl}""",
         from_email=EMAIL_HOST_USER,
         recipient_list=["tulaganow@gmail.com"],
         fail_silently=False,

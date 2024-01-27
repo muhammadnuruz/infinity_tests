@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinity's Test</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div id="loginSection" class="start-screen">
+            <h1 class="heading">Kirish</h1>
+            <input type="text" id="fullName" placeholder="Ismingizni kiriting">
+            <input type="password" id="password" placeholder="Parolingizni kiriting">
+            <button id="login" class="btn">Kirish</button>
+        </div>
+
+        <div id="buttons" class="button-wrapper"></div>
+        <div id="questionsAndAnswers" class="question-wrapper"></div>
+        <div id="submitResponse" class="answer-wrapper"></div>
+        <p style="color: white">Yangi foydalanuvchi? <a href="{% url 'register-page' %}">Ro'yxatdan o'tish</a></p>
+    </div>
+
+    <!-- Django statik fayllar tizimi orqali JavaScript faylini ulash -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
