@@ -4,7 +4,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     const fullName = document.getElementById('fullName').value;
     const password = document.getElementById('password').value;
 
-    fetch('http://localhost:8000/api/users/create/', {
+    fetch('http://16.171.162.86:8000//api/users/create/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
