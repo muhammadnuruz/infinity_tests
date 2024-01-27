@@ -27,6 +27,7 @@ document.getElementById('login').addEventListener('click', function() {
     })    .then(data => {
         token = data.access;
         document.getElementById('loginSection').classList.add('hide'); // Kirish qismi yashiriladi
+        document.getElementById('registerLink').style.display = 'none'; // Ro'yxatdan o'tish havolasini yashirish
         loadTopics(); // Mavzular yuklanadi
     })
     .catch((error) => {
