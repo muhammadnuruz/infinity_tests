@@ -8,7 +8,10 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',  // Qo'shimcha header
         },
+        mode: 'cors',  // CORS-ni yoqish
+        credentials: 'include',  // Credentiallarni o'zgartiring
         body: JSON.stringify({ full_name: fullName, password: password })
     })
     .then(response => response.json())
