@@ -15,7 +15,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     .then(data => {
         if (data.password) {
             // Ro'yxatdan o'tish muvaffaqiyatli bo'lsa, bosh sahifaga yo'naltirish
-            window.location.href = 'file:///home/muhammadnur/VisualCodeProjects/index.html';
+            window.location.href = 'http://127.0.0.1:8000/';
         } else {
             // Xabar ko'rsatish
             document.getElementById('message').textContent = data.full_name;
