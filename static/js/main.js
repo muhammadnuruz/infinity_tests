@@ -1,5 +1,6 @@
 let token = '';
 let currentTopicId = null;
+let data = null;
 
 document.getElementById('login').addEventListener('click', function () {
     const fullName = document.getElementById('fullName').value.trim();
