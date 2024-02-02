@@ -25,7 +25,7 @@ async function loginUser() {
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/auth/token/', {
+        const response = await fetch('/api/auth/token/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ async function loginUser() {
 }
 
 function loadTopics() {
-    fetch('http://127.0.0.1:8000/api/topics/', {
+    fetch('/api/topics/', {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -74,7 +74,7 @@ function loadTopics() {
 }
 
 function loadQuestionsForTopic(topicId) {
-    fetch(`http://127.0.0.1:8000/api/tests/get_test/${topicId}`, {
+    fetch(`/api/tests/get_test/${topicId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -110,7 +110,7 @@ function handleQuestionsAndAnswers(data) {
 }
 
 function submitAnswer(answer) {
-    fetch('http://127.0.0.1:8000/api/tests/submit_answer/', {
+    fetch('/api/tests/submit_answer/', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
