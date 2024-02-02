@@ -66,7 +66,6 @@ function loadTopics() {
 
 // Qolgan funksiyalar
 
-
 function loadQuestionsForTopic(topicId) {
     fetch(`/api/tests/get_test/${topicId}`, {
         method: 'GET',
