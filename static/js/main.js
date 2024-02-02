@@ -155,6 +155,8 @@ function handleTestCompletion(data) {
 
 // Boshqa kodlar...
 
+// Boshqa kodlar...
+
 function showTestResults(data) {
     const resultsDiv = document.getElementById('testResults');
     const resultMessage = document.getElementById('resultMessage');
@@ -180,10 +182,15 @@ function showTestResults(data) {
     wrongAnswersElement.className = 'wrong';
     wrongAnswersElement.textContent = `Noto'g'ri javoblar: ${data.wrong_questions}`;
 
-    // Bitta mazmun qo'shib, qanday ma'lumotlarni ko'rsatishni tekshirib ko'ramiz
-    resultsDiv.appendChild(correctAnswersElement);
-    resultsDiv.appendChild(wrongAnswersElement);
+    // Natijalarni ko'rsatish uchun ul elementini o'zgaruvchiga qo'shamiz
+    const resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    resultsList.appendChild(correctAnswersElement);
+    resultsList.appendChild(wrongAnswersElement);
 }
+
+// Boshqa kodlar...
+
 
 // Boshqa kodlar...
 
