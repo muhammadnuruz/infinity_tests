@@ -153,6 +153,8 @@ function handleTestCompletion(data) {
     qAndADiv.innerHTML = completionMessage;
 }
 
+// Boshqa kodlar...
+
 function showTestResults(data) {
     const resultsDiv = document.getElementById('testResults');
     const resultMessage = document.getElementById('resultMessage');
@@ -168,7 +170,23 @@ function showTestResults(data) {
 
     // Natijalarni ko'rsatish uchun div-ni ko'rsatish
     resultsDiv.classList.remove('hide');
+
+    // Yangi o'zgaruvchilarni yaratish
+    const correctAnswersElement = document.createElement('li');
+    correctAnswersElement.className = 'correct';
+    correctAnswersElement.textContent = `To'g'ri javoblar: ${data.correct_questions}`;
+
+    const wrongAnswersElement = document.createElement('li');
+    wrongAnswersElement.className = 'wrong';
+    wrongAnswersElement.textContent = `Noto'g'ri javoblar: ${data.wrong_questions}`;
+
+    // Bitta mazmun qo'shib, qanday ma'lumotlarni ko'rsatishni tekshirib ko'ramiz
+    resultsDiv.appendChild(correctAnswersElement);
+    resultsDiv.appendChild(wrongAnswersElement);
 }
+
+// Boshqa kodlar...
+
 
 const correctAnswersElement = document.createElement('li');
 correctAnswersElement.className = 'correct';
