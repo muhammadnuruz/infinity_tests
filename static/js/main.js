@@ -1,12 +1,12 @@
 let token = '';
 let currentTopicId = null;
 
-document.getElementById('login').addEventListener('click', function() {
+document.getElementById('login').addEventListener('click', function () {
     const fullName = document.getElementById('fullName').value.trim();
     const password = document.getElementById('password').value.trim();
 
-     // Ism va parolni tekshirish
-     if (!fullName || !password) {
+    // Ism va parolni tekshirish
+    if (!fullName || !password) {
         alert('Ism va parolni kiriting!');
         return;
     }
@@ -19,22 +19,25 @@ document.getElementById('login').addEventListener('click', function() {
         },
         body: JSON.stringify({ full_name: fullName, password: password })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Kirish ma\'lumotlari xato!');
-        }
-        return response.json();
-    })    .then(data => {
-        token = data.access;
-        document.getElementById('loginSection').classList.add('hide'); // Kirish qismi yashiriladi
-        document.getElementById('registerLink').style.display = 'none'; // Ro'yxatdan o'tish havolasini yashirish
-        loadTopics(); // Mavzular yuklanadi
-    })
-    .catch((error) => {
-        console.error('Xato:', error);
-        alert('Xato: ' + error.message); // Xato xabari
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Kirish ma\'lumotlari xato!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // O'zgartirish: Tokenni olishdan so'ng server tomonidan berilgan tokenni saqlang
+            token = data.access;
+            document.getElementById('loginSection').classList.add('hide'); // Kirish qismi yashiriladi
+            document.getElementById('registerLink').style.display = 'none'; // Ro'yxatdan o'tish havolasini yashirish
+            loadTopics(); // Mavzular yuklanadi
+        })
+        .catch((error) => {
+            console.error('Xato:', error);
+            alert('Xato: ' + error.message); // Xato xabari
+        });
 });
+
 
 function loadTopics() {
     // Mavzularni yuklash uchun so'rov
