@@ -27,13 +27,13 @@ document.getElementById('login').addEventListener('click', function() {
     })
     .then(data => {
         token = data.access;
-        document.getElementById('loginSection').classList.add('hide'); // Kirish qismi yashiriladi
-        document.getElementById('registerLink').style.display = 'none'; // Ro'yxatdan o'tish havolasini yashirish
-        loadTopics(); // Mavzular yuklanadi
+        document.getElementById('loginSection').classList.add('hide');
+        document.getElementById('registerLink').style.display = 'none';
+        loadTopics();
     })
     .catch((error) => {
         console.error('Xato:', error);
-        alert('Xato: ' + error.message); // Xato xabari
+        alert('Xato: ' + error.message);
     });
 });
 
@@ -57,12 +57,15 @@ function loadTopics() {
             button.onclick = function() {
                 currentTopicId = item.id;
                 loadQuestionsForTopic(item.id);
-                buttonsContainer.innerHTML = ''; // Boshqa mavzular tugmalarini o'chirish
+                buttonsContainer.innerHTML = '';
             };
             buttonsContainer.appendChild(button);
         });
     });
 }
+
+// Qolgan funksiyalar
+
 
 function loadQuestionsForTopic(topicId) {
     fetch(`/api/tests/get_test/${topicId}`, {
@@ -168,10 +171,10 @@ function showTestResults(data) {
     resultsDiv.classList.remove('hide');
 }
 
-let correctAnswersElement = document.createElement('li');
+const correctAnswersElement = document.createElement('li');
 correctAnswersElement.className = 'correct';
 correctAnswersElement.textContent = `To'g'ri javoblar: ${data.correct_questions}`;
 
-let wrongAnswersElement = document.createElement('li');
+const wrongAnswersElement = document.createElement('li');
 wrongAnswersElement.className = 'wrong';
 wrongAnswersElement.textContent = `Noto'g'ri javoblar: ${data.wrong_questions}`;
