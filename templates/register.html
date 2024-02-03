@@ -1,6 +1,5 @@
 {% load static %}
 
-{% csrf_token %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +11,7 @@
 <body>
     <div class="container">
         <form id="registerForm">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="fullName">To'liq ism</label>
                 <input type="text" id="fullName" placeholder="Ismingizni kiriting" required>
