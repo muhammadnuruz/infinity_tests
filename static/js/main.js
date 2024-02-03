@@ -101,9 +101,6 @@ function handleQuestionsAndAnswers(data) {
         };
         qAndADiv.appendChild(button);
     });
-
-    // Test tugmasini chiqarish
-    document.getElementById('endTest').classList.remove('hide');
 }
 
 function submitAnswer(answer) {
@@ -205,21 +202,3 @@ correctAnswersElement.textContent = `To'g'ri javoblar: ${data.correct_questions}
 const wrongAnswersElement = document.createElement('li');
 wrongAnswersElement.className = 'wrong';
 wrongAnswersElement.textContent = `Noto'g'ri javoblar: ${data.wrong_questions}`;
-
-function endTest() {
-    fetch('/api/tests/end_test/', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        showTestResults(data);
-    })
-    .catch(error => {
-        console.error('Xato:', error);
-        document.getElementById('submitResponse').innerHTML = 'Xato: ' + error;
-    });
-}
