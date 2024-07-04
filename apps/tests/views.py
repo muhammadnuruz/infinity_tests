@@ -1,25 +1,33 @@
 import random
-
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.core.mail import send_mail
-
 from config.settings import EMAIL_HOST_USER
 from apps.tests.models import Tests, Answers
 from apps.tests.serializers import GetTestsSerializer, CheckAnswersSerializer
-from apps.users.permissions import UserPermission
+from apps.telegram_users.models import TelegramUsers
 
 
-def send_test_for_email(full_name: str, tr: int, fl: int):
+def send_test_results_email(phone_number: str, full_name: str, correct: int, incorrect: int, answers: dict):
+    answers_details = "\n".join([
+        f"Question ID: {test_id}, Answered Correctly: {result}"
+        for test_id, result in answers.items()
+    ])
     send_mail(
         subject=f"{full_name} worked the test.",
         message=f"""
-{full_name}'s results        
+{phone_number} - Phone number
+{full_name}'s results:
 
-number of questions: {tr + fl}
-correct answers : {tr}
-wrong answers : {fl}""",
+Number of questions: {correct + incorrect}
+Correct answers: {correct}
+Wrong answers: {incorrect}
+
+Details of answers:
+{answers_details}
+""",
         from_email=EMAIL_HOST_USER,
         recipient_list=["tulaganow@gmail.com"],
         fail_silently=False,
@@ -28,80 +36,91 @@ wrong answers : {fl}""",
 
 class GetTestView(GenericAPIView):
     serializer_class = GetTestsSerializer
-    permission_classes = [UserPermission]
+    permission_classes = [AllowAny]
 
-    def get(self, request, *args, **kwargs):
-        topic_id = self.kwargs.get('topic_id')
-        available_tests = Tests.objects.filter(topic=topic_id).exclude(id__in=request.user.step.keys())
+    def get(self, request, chat_id, *args, **kwargs):
+        try:
+            telegram_user = TelegramUsers.objects.get(chat_id=chat_id)
+        except TelegramUsers.DoesNotExist:
+            return Response({"message": "Telegram user not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Ensure step is a dictionary
+        if telegram_user.step is None:
+            telegram_user.step = {}
+            telegram_user.save()
+
+        available_tests = Tests.objects.exclude(id__in=telegram_user.step.keys())
 
         if not available_tests.exists():
-            tr, fl = 0, 0
-            for k, v in request.user.step.items():
-                if v is True:
-                    tr += 1
-                elif v is False:
-                    fl += 1
-            send_test_for_email(tr=tr, fl=fl, full_name=request.user.full_name)
-            request.user.step = {}
-            request.user.save()
-            return Response(data={
-                "message": "You have completed all the tests for this topic.",
-                "number_of_questions": tr + fl,
-                "correct_questions": tr,
-                "wrong_questions": fl,
-            },
-                status=status.HTTP_404_NOT_FOUND)
+            correct = sum(1 for v in telegram_user.step.values() if v)
+            incorrect = sum(1 for v in telegram_user.step.values() if v is False)
+            send_test_results_email(full_name=telegram_user.full_name, correct=correct, incorrect=incorrect,
+                                    answers=telegram_user.step, phone_number=telegram_user.phone_number)
+            telegram_user.step = {}
+            telegram_user.save()
+            return Response({
+                "message": "You have completed all the tests.",
+                "number_of_questions": correct + incorrect,
+                "correct_questions": correct,
+                "wrong_questions": incorrect,
+            }, status=status.HTTP_404_NOT_FOUND)
+
         random_test = random.choice(available_tests)
-        user_step = request.user.step
-        user_step[str(random_test.id)] = None
-        request.user.step = user_step
-        request.user.save()
-        data = {"question_number": len(request.user.step)}
+        telegram_user.step[str(random_test.id)] = None
+        telegram_user.save()
+        data = {"question_number": len(telegram_user.step)}
         data.update(self.get_serializer(random_test).data)
         return Response(data, status=status.HTTP_200_OK)
 
 
 class SubmitAnswerView(GenericAPIView):
     serializer_class = CheckAnswersSerializer
-    permission_classes = [UserPermission]
+    permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, chat_id, *args, **kwargs):
+        try:
+            telegram_user = TelegramUsers.objects.get(chat_id=chat_id)
+        except TelegramUsers.DoesNotExist:
+            return Response({"message": "Telegram user not found"}, status=status.HTTP_404_NOT_FOUND)
+
         user_answer = request.data.get('answer')
-        test_id = None
-        for k, v in request.user.step.items():
-            if v is None:
-                test_id = k
-                break
+        test_id = next((k for k, v in telegram_user.step.items() if v is None), None)
+
         if not test_id:
-            return Response(data={"message": "No active test found."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "No active test found."}, status=status.HTTP_400_BAD_REQUEST)
+
         correct_answers = Answers.objects.filter(test_id=test_id, is_correct=True)
         is_correct = any(user_answer == answer.answer for answer in correct_answers)
-        request.user.step[test_id] = is_correct
-        request.user.save()
-        if is_correct:
-            return Response(data={"message": "Correct answer!"}, status=status.HTTP_200_OK)
-        else:
-            return Response(data={"message": "Wrong answer!"}, status=status.HTTP_200_OK)
+        telegram_user.step[test_id] = is_correct
+        telegram_user.save()
+
+        message = "Correct answer!" if is_correct else "Wrong answer!"
+        return Response({"message": message}, status=status.HTTP_200_OK)
 
 
 class EndTestView(GenericAPIView):
-    permission_classes = [UserPermission]
+    permission_classes = [AllowAny]
 
-    def get(self, request, *args, **kwargs):
-        tr, fl, no = 0, 0, 0
-        for k, v in request.user.step.items():
-            if v is True:
-                tr += 1
-            elif v is False:
-                fl += 1
-        send_test_for_email(tr=tr, fl=fl, full_name=request.user.full_name)
-        request.user.step = {}
-        request.user.save()
-        return Response(data={
+    def get(self, request, chat_id, *args, **kwargs):
+        try:
+            telegram_user = TelegramUsers.objects.get(chat_id=chat_id)
+        except TelegramUsers.DoesNotExist:
+            return Response({"message": "Telegram user not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Ensure step is a dictionary
+        if telegram_user.step is None:
+            telegram_user.step = {}
+            telegram_user.save()
+
+        correct = sum(1 for v in telegram_user.step.values() if v)
+        incorrect = sum(1 for v in telegram_user.step.values() if v is False)
+        send_test_results_email(full_name=telegram_user.full_name, correct=correct, incorrect=incorrect,
+                                answers=telegram_user.step, phone_number=telegram_user.phone_number)
+        telegram_user.step = {}
+        telegram_user.save()
+        return Response({
             "message": "You have completed tests.",
-            "number_of_questions": tr + fl,
-            "correct_questions": tr,
-            "wrong_questions": fl,
-        },
-            status=status.HTTP_404_NOT_FOUND)
+            "number_of_questions": correct + incorrect,
+            "correct_questions": correct,
+            "wrong_questions": incorrect,
+        }, status=status.HTTP_200_OK)

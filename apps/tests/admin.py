@@ -8,10 +8,10 @@ class AnswersInline(admin.StackedInline):
 
 
 class TestsAdmin(admin.ModelAdmin):
-    list_display = ('question', 'topic', 'created_at')
-    list_filter = ('topic', 'created_at')
+    list_display = ('question', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('question',)
-    ordering = ('question', 'topic')
+    ordering = ('question', )
     inlines = [AnswersInline]
 
 

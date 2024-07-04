@@ -17,17 +17,15 @@ class GetTestAnswerSerializer(serializers.ModelSerializer):
 
 
 class GetTestsSerializer(serializers.ModelSerializer):
-    topic_id = serializers.IntegerField(write_only=True)
     question_number = serializers.CharField(max_length=10, read_only=True)
 
     class Meta:
         model = Tests
-        fields = ['topic', 'question_number', 'question', 'answers', 'topic_id']
-        extra_kwargs = {'topic': {'read_only': True}, 'question': {'read_only': True}, 'answers': {'read_only': True}}
+        fields = ['question_number', 'question', 'answers']
+        extra_kwargs = {'question': {'read_only': True}, 'answers': {'read_only': True}}
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['topic'] = instance.topic.name
         data = GetTestAnswerSerializer(instance.answers.all(), many=True).data
         random.shuffle(data)
         representation['answers'] = data

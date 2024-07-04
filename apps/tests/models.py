@@ -1,11 +1,8 @@
 from django.db import models
 
-from apps.topics.models import Topics
-
 
 class Tests(models.Model):
     question = models.TextField()
-    topic = models.ForeignKey(Topics, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

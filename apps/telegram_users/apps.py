@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ScienceConfig(AppConfig):
+class TelegramUsersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.topics'
+    name = 'apps.telegram_users'
