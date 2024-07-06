@@ -54,14 +54,14 @@ async def back_main_menu_function_3(msg: types.Message, state: FSMContext):
     test = json.loads(requests.get(url=f'http://127.0.0.1:8000/api/tests/end-test/{msg.from_user.id}/').content)
     if msg.text == end_test:
         await msg.answer(text=f"""
-Siz barcha testni yakunladingiz
+Siz testni yakunladingiz
 
 Testlar soni: {test['number_of_questions']}
 To'g'ri javoblar soni: {test['correct_questions']}
 Noto'g'ri javoblar soni: {test['wrong_questions']}""", reply_markup=await main_menu_buttons(msg.from_user.id))
     else:
         await msg.answer(text=f"""
-Вы прошли все испытания
+Вы прошли испытания
 
 Количество тестов: {test['number_of_questions']}
 Количество правильных ответов: {test['correct_questions']}

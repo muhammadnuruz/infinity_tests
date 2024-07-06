@@ -71,8 +71,6 @@ async def register_function(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state='register_2', content_types=types.ContentTypes.CONTACT)
 async def register_function_4(msg: types.Message, state: FSMContext):
-    tg_user = json.loads(
-        requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{msg.from_user.id}/").content)
     async with state.proxy() as data:
         for admin in admins:
             await bot.send_message(chat_id=admin, text=f"""
@@ -89,7 +87,7 @@ Telefon raqam: {msg.contact.phone_number}""", parse_mode='HTML')
             'language': data['language']
         }
         requests.post(url=f"http://127.0.0.1:8000/api/telegram-users/create/", data=data)
-    if tg_user['language'] == 'uz':
+    if data['language'] == 'uz':
         await msg.answer(text="Ro'yhatdan o'tdingiz ✅", reply_markup=await main_menu_buttons(msg.from_user.id))
     else:
         await msg.answer(text="Вы зарегистрированы ✅", reply_markup=await main_menu_buttons(msg.from_user.id))
