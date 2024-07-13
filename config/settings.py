@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-4g$b8c$^ndraimcbo#u(j%%ulvo8u%#z3s_w-lb)j+y805kh&r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '213.171.4.99', 'infintest.uz', 'infintest.uz:8000',
-                 "quiz-app-coders-uz.vercel.app", "quiz-app-coders-uz.vercel.app:8000"]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '90.156.229.160']
 
 # Application definition
 
