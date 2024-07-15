@@ -4,7 +4,7 @@ import requests
 from aiogram.types import ReplyKeyboardMarkup
 
 from bot.buttons.text import back_main_menu, adverts, none_advert, forward_advert, performance, cabinet, end_test, \
-    choice_language, choice_language_ru, cabinet_ru, performance_ru, end_test_ru
+    choice_language, choice_language_ru, cabinet_ru, performance_ru
 
 
 async def main_menu_buttons(chat_id: int):
@@ -43,13 +43,10 @@ async def advert_menu_buttons():
     return ReplyKeyboardMarkup(keyboard=design, resize_keyboard=True)
 
 
-async def test_performance_menu_button(test: dict, chat_id: int):
-    tg_user = json.loads(requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{chat_id}/").content)
+async def test_performance_menu_button(test: dict):
     design = []
     for i in test['answers']:
         design.append([i['answer']])
-    if tg_user['language'] == 'uz':
+    if test['question_number'] // 10 == 0:
         design.append([end_test])
-    else:
-        design.append([end_test_ru])
     return ReplyKeyboardMarkup(keyboard=design, resize_keyboard=True)

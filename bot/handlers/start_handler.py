@@ -59,15 +59,15 @@ async def language_function(call: types.CallbackQuery, state: FSMContext):
 async def register_function(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['full_name'] = msg.text
-    k = KeyboardButton(text="TELEFON RAQAM📲", request_contact=True)
+    k = KeyboardButton(text="MY NUMBER📲", request_contact=True)
     kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     kb_client.add(k)
     await state.set_state("register_2")
     if data['language'] == 'uz':
-        await msg.answer(text="«TELEFON RAQAM📲» - tugmasi orqali telefon raqamingizni yuboring 👇",
+        await msg.answer(text="«MY NUMBER📲» - tugmasi orqali telefon raqamingizni yuboring 👇",
                          reply_markup=kb_client)
     else:
-        await msg.answer(text="Отправьте свой номер телефона через кнопку «TELEFON RAQAM📲» 👇", reply_markup=kb_client)
+        await msg.answer(text="Отправьте свой номер телефона через кнопку «MY NUMBER📲» 👇", reply_markup=kb_client)
 
 
 @dp.message_handler(state='register_2', content_types=types.ContentTypes.CONTACT)

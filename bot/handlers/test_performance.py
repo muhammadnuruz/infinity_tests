@@ -94,13 +94,10 @@ Noto'g'ri javoblar soni: {test['wrong_questions']}""", reply_markup=await main_m
 Количество неправильных ответов: {test['wrong_questions']}""", reply_markup=await main_menu_buttons(msg.from_user.id))
     else:
         await state.set_state('test_performance')
-        text = "savol"
-        if tg_user['language'] == 'ru':
-            text = 'вопрос'
         await msg.answer(text=f"""
 {answer['message']}
 
-{test['question_number']} - {text}
+{test['question_number']} - question
 
 {test['question']}
-""", reply_markup=await test_performance_menu_button(test, msg.from_user.id))
+""", reply_markup=await test_performance_menu_button(test))
