@@ -47,6 +47,6 @@ async def test_performance_menu_button(test: dict):
     design = []
     for i in test['answers']:
         design.append([i['answer']])
-    if test['question_number'] // 10 == 0:
+    if test['question_number'] % 10 == 0:
         design.append([end_test])
     return ReplyKeyboardMarkup(keyboard=design, resize_keyboard=True)
