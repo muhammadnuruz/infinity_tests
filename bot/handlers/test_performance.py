@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text
 
 from bot.buttons.reply_buttons import test_performance_menu_button
 from bot.buttons.reply_buttons import main_menu_buttons
-from bot.buttons.text import performance, end_test, performance_ru, end_test_ru
+from bot.buttons.text import performance, end_test, performance_ru
 from bot.dispatcher import dp
 
 
@@ -48,7 +48,7 @@ Noto'g'ri javoblar soni: {test['wrong_questions']}""")
 {test['question']}""", reply_markup=await test_performance_menu_button(test, msg.from_user.id))
 
 
-@dp.message_handler(Text(equals=[end_test, end_test_ru]), state="test_performance")
+@dp.message_handler(Text(end_test), state="test_performance")
 async def back_main_menu_function_3(msg: types.Message, state: FSMContext):
     await state.finish()
     test = json.loads(requests.get(url=f'http://127.0.0.1:8000/api/tests/end-test/{msg.from_user.id}/').content)
