@@ -12,7 +12,7 @@ from apps.telegram_users.models import TelegramUsers
 
 def send_test_results_email(phone_number: str, full_name: str, correct: int, incorrect: int, answers: dict):
     answers_details = "\n".join([
-        f"Question ID: {test_id}, Answered Correctly: {result}"
+        f"Question: {Tests.objects.get(id=test_id).question}, Answered Correctly: {result}"
         for test_id, result in answers.items()
     ])
     send_mail(
