@@ -4,7 +4,7 @@ import requests
 from aiogram.types import ReplyKeyboardMarkup
 
 from bot.buttons.text import back_main_menu, adverts, none_advert, forward_advert, performance, cabinet, end_test, \
-    choice_language, choice_language_ru, cabinet_ru, performance_ru
+    choice_language, choice_language_ru, cabinet_ru, performance_ru, choice_language_en, performance_en, cabinet_en
 
 
 async def main_menu_buttons(chat_id: int):
@@ -13,6 +13,11 @@ async def main_menu_buttons(chat_id: int):
         design = [
             [cabinet, performance],
             [choice_language]
+        ]
+    elif tg_user['language'] == 'en':
+        design = [
+            [cabinet_en, performance_en],
+            [choice_language_en]
         ]
     else:
         design = [

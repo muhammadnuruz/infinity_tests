@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text
 
 from bot.buttons.reply_buttons import test_performance_menu_button
 from bot.buttons.reply_buttons import main_menu_buttons
-from bot.buttons.text import performance, end_test, performance_ru
+from bot.buttons.text import performance, end_test, performance_ru, performance_en
 from bot.dispatcher import dp
 
 
@@ -19,7 +19,7 @@ def get_test(chat_id: str):
         return False, test
 
 
-@dp.message_handler(Text(equals=[performance, performance_ru]))
+@dp.message_handler(Text(equals=[performance, performance_ru, performance_en]))
 async def test_performance_function(msg: types.Message, state: FSMContext):
     ftest, test = get_test(str(msg.from_user.id))
     if not ftest:
@@ -30,6 +30,13 @@ Siz barcha testni yakunladingiz
 Testlar soni: {test['number_of_questions']}
 To'g'ri javoblar soni: {test['correct_questions']}
 Noto'g'ri javoblar soni: {test['wrong_questions']}""")
+        elif msg.text == performance_en:
+            await msg.answer(text=f"""
+You have completed all the test
+
+Number of tests: {test['number_of_questions']}
+Number of correct answers: {test['correct_questions']}
+Number of wrong answers: {test['wrong_questions']}""")
         else:
             await msg.answer(text=f"""
 Вы прошли все испытания
@@ -39,11 +46,8 @@ Noto'g'ri javoblar soni: {test['wrong_questions']}""")
 Количество неправильных ответов: {test['wrong_questions']}""")
     else:
         await state.set_state('test_performance')
-        text = "savol"
-        if msg.text == performance_ru:
-            text = 'вопрос'
         await msg.answer(text=f"""
-{test['question_number']} - {text}
+{test['question_number']} - question
 
 {test['question']}""", reply_markup=await test_performance_menu_button(test))
 
@@ -51,14 +55,23 @@ Noto'g'ri javoblar soni: {test['wrong_questions']}""")
 @dp.message_handler(Text(end_test), state="test_performance")
 async def back_main_menu_function_3(msg: types.Message, state: FSMContext):
     await state.finish()
+    tg_user = json.loads(
+        requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{msg.from_user.id}/").content)
     test = json.loads(requests.get(url=f'http://127.0.0.1:8000/api/tests/end-test/{msg.from_user.id}/').content)
-    if msg.text == end_test:
+    if tg_user['language'] == 'uz':
         await msg.answer(text=f"""
 Siz testni yakunladingiz
 
 Testlar soni: {test['number_of_questions']}
 To'g'ri javoblar soni: {test['correct_questions']}
 Noto'g'ri javoblar soni: {test['wrong_questions']}""", reply_markup=await main_menu_buttons(msg.from_user.id))
+    elif tg_user['language'] == 'en':
+        await msg.answer(text=f"""
+You have completed all the test
+
+Number of tests: {test['number_of_questions']}
+Number of correct answers: {test['correct_questions']}
+Number of wrong answers: {test['wrong_questions']}""", reply_markup=await main_menu_buttons(msg.from_user.id))
     else:
         await msg.answer(text=f"""
 Вы прошли испытания
@@ -85,6 +98,13 @@ Siz barcha testni yakunladingiz
 Testlar soni: {test['number_of_questions']}
 To'g'ri javoblar soni: {test['correct_questions']}
 Noto'g'ri javoblar soni: {test['wrong_questions']}""", reply_markup=await main_menu_buttons(msg.from_user.id))
+        elif tg_user['language'] == 'en':
+            await msg.answer(text=f"""
+You have completed all the test
+
+Number of tests: {test['number_of_questions']}
+Number of correct answers: {test['correct_questions']}
+Number of wrong answers: {test['wrong_questions']}""", reply_markup=await main_menu_buttons(msg.from_user.id))
         else:
             await msg.answer(text=f"""
 Вы прошли все испытания

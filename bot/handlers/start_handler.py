@@ -7,20 +7,16 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 from bot.buttons.inline_buttons import language_buttons
 from bot.buttons.reply_buttons import main_menu_buttons
-from bot.buttons.text import back_main_menu, choice_language, choice_language_ru
+from bot.buttons.text import back_main_menu, choice_language, choice_language_ru, back_main_menu_ru, back_main_menu_en, \
+    choice_language_en
 from bot.dispatcher import dp, bot
 from main import admins
 
 
-@dp.message_handler(Text(back_main_menu))
-async def back_main_menu_function_1(msg: types.Message):
-    await msg.answer(text=f"Asosiy menu🏠", reply_markup=await main_menu_buttons(msg.from_user.id))
-
-
-@dp.callback_query_handler(Text(back_main_menu))
-async def back_main_menu_function_2(call: types.CallbackQuery):
-    await call.message.delete()
-    await call.message.answer(text=f"Asosiy menu🏠", reply_markup=await main_menu_buttons(msg.from_user.id))
+@dp.message_handler(Text(equals=[back_main_menu, back_main_menu_ru, back_main_menu_en]), )
+async def back_main_menu_function_1(msg: types.Message, state: FSMContext):
+    await state.finish()
+    await msg.answer(text=msg.text, reply_markup=await main_menu_buttons(msg.from_user.id))
 
 
 @dp.message_handler(CommandStart())
@@ -35,10 +31,16 @@ Tilni tanlang
 
 -------------
 
-Выберите язык""", reply_markup=await language_buttons())
+Выберите язык
+
+-------------
+
+Select a language""", reply_markup=await language_buttons())
     except KeyError:
         if tg_user.get('language') == 'uz':
             await msg.answer(text=f"Bot yangilandi ♻", reply_markup=await main_menu_buttons(msg.from_user.id))
+        elif tg_user['language'] == 'en':
+            await msg.answer(text="The bot has been updated ♻", reply_markup=await main_menu_buttons(msg.from_user.id))
         else:
             await msg.answer(text=f"Бот обновлен ♻", reply_markup=await main_menu_buttons(msg.from_user.id))
 
@@ -51,6 +53,8 @@ async def language_function(call: types.CallbackQuery, state: FSMContext):
     await state.set_state('register_1')
     if call.data.split("_")[-1] == 'uz':
         await call.message.answer(text=f"Ism-Familiyangizni kiriting ✍️:")
+    elif call.data.split("_")[-1] == 'en':
+        await call.message.answer(text="Enter your name and surname ✍️:")
     else:
         await call.message.answer(text=f"Введите свое имя и фамилию ✍️:")
 
@@ -64,10 +68,12 @@ async def register_function(msg: types.Message, state: FSMContext):
     kb_client.add(k)
     await state.set_state("register_2")
     if data['language'] == 'uz':
-        await msg.answer(text="«MY NUMBER📲» - tugmasi orqali telefon raqamingizni yuboring 👇",
+        await msg.answer(text="«MY NUMBER📲» - tugmasini bosish orqali telefon raqamingizni yuboring 👇",
                          reply_markup=kb_client)
+    if data['language'] == 'en':
+        await msg.answer(text="Send your phone number by clicking the «MY NUMBER📲» button 👇", reply_markup=kb_client)
     else:
-        await msg.answer(text="Отправьте свой номер телефона через кнопку «MY NUMBER📲» 👇", reply_markup=kb_client)
+        await msg.answer(text="Укажите свой номер телефона, нажав кнопку «MY NUMBER📲» 👇", reply_markup=kb_client)
 
 
 @dp.message_handler(state='register_2', content_types=types.ContentTypes.CONTACT)
@@ -90,15 +96,19 @@ Telefon raqam: {msg.contact.phone_number}""", parse_mode='HTML')
         requests.post(url=f"http://127.0.0.1:8000/api/telegram-users/create/", data=data)
     if data['language'] == 'uz':
         await msg.answer(text="Ro'yhatdan o'tdingiz ✅", reply_markup=await main_menu_buttons(msg.from_user.id))
+    elif data['language'] == 'en':
+        await msg.answer(text="You have registered ✅", reply_markup=await main_menu_buttons(msg.from_user.id))
     else:
         await msg.answer(text="Вы зарегистрированы ✅", reply_markup=await main_menu_buttons(msg.from_user.id))
     await state.finish()
 
 
-@dp.message_handler(Text(equals=[choice_language, choice_language_ru]))
+@dp.message_handler(Text(equals=[choice_language, choice_language_ru, choice_language_en]))
 async def change_language_function_1(msg: types.Message):
     if msg.text == choice_language:
         await msg.answer(text="Tilni tanlang", reply_markup=await language_buttons())
+    elif msg.text == choice_language_en:
+        await msg.answer(text="Select a language", reply_markup=await language_buttons())
     else:
         await msg.answer(text="Выберите язык", reply_markup=await language_buttons())
 
@@ -118,5 +128,8 @@ async def language_function_1(call: types.CallbackQuery, state: FSMContext):
     await call.message.delete()
     if call.data.split("_")[-1] == 'uz':
         await call.message.answer(text="Til o'zgartirildi 🇺🇿", reply_markup=await main_menu_buttons(call.from_user.id))
+    elif call.data.split("_")[-1] == 'en':
+        await call.message.answer(text="The language has been changed 🇺🇿",
+                                  reply_markup=await main_menu_buttons(call.from_user.id))
     else:
         await call.message.answer(text="Язык изменен 🇷🇺", reply_markup=await main_menu_buttons(call.from_user.id))
