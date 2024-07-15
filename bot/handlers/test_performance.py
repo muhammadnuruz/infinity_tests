@@ -45,7 +45,7 @@ Noto'g'ri javoblar soni: {test['wrong_questions']}""")
         await msg.answer(text=f"""
 {test['question_number']} - {text}
 
-{test['question']}""", reply_markup=await test_performance_menu_button(test, msg.from_user.id))
+{test['question']}""", reply_markup=await test_performance_menu_button(test))
 
 
 @dp.message_handler(Text(end_test), state="test_performance")
