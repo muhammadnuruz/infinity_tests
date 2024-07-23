@@ -70,7 +70,7 @@ async def register_function(msg: types.Message, state: FSMContext):
     if data['language'] == 'uz':
         await msg.answer(text="«MY NUMBER📲» - tugmasini bosish orqali telefon raqamingizni yuboring 👇",
                          reply_markup=kb_client)
-    if data['language'] == 'en':
+    elif data['language'] == 'en':
         await msg.answer(text="Send your phone number by clicking the «MY NUMBER📲» button 👇", reply_markup=kb_client)
     else:
         await msg.answer(text="Укажите свой номер телефона, нажав кнопку «MY NUMBER📲» 👇", reply_markup=kb_client)
