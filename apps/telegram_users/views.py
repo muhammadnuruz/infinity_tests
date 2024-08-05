@@ -7,6 +7,7 @@ from apps.telegram_users.serializers import TelegramUsersSerializer, TelegramUse
 
 
 class TelegramUsersListViewSet(ListAPIView):
+    permission_classes = [AllowAny]
     queryset = TelegramUsers.objects.all()
     serializer_class = TelegramUsersSerializer
 
