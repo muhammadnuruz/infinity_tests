@@ -53,7 +53,8 @@ async def get_user_id_for_send_to_user(msg: types.Message, state: FSMContext):
     else:
         await session.delete()
         await msg.answer(
-            text=f"Habar userlarga tarqatildi✅\n\n{suc}-ta userga yetib bordi✅", reply_markup=await main_menu_buttons())
+            text=f"Habar userlarga tarqatildi✅\n\n{suc}-ta userga yetib bordi✅",
+            reply_markup=await main_menu_buttons(msg.from_user.id))
 
 
 @dp.message_handler(Text(forward_advert))
@@ -82,4 +83,5 @@ async def forward_txt(msg: types.Message, state: FSMContext):
     else:
         await session.delete()
         await msg.answer(
-            text=f"Habar userlarga tarqatildi✅\n\n{suc}-ta userga yetib bordi✅", reply_markup=await main_menu_buttons())
+            text=f"Habar userlarga tarqatildi✅\n\n{suc}-ta userga yetib bordi✅",
+            reply_markup=await main_menu_buttons(msg.from_user.id))
