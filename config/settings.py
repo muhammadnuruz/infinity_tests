@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.tests',
     'apps.telegram_users',
+    'apps.categories',
+    'apps.words'
 ]
 
 MIDDLEWARE = [
@@ -147,8 +149,8 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Chat Project API',
-    'DESCRIPTION': 'API endpoints for Chat Project',
+    'TITLE': 'Infinity Test Project API',
+    'DESCRIPTION': 'API endpoints for Infinity Test',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': 'api/'
@@ -171,3 +173,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'muhammadnurpdp@gmail.com'
 EMAIL_HOST_PASSWORD = 'nvdi brrh qzaa bnib'
+
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
