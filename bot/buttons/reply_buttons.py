@@ -5,7 +5,7 @@ from aiogram.types import ReplyKeyboardMarkup
 
 from bot.buttons.text import back_main_menu, adverts, none_advert, forward_advert, performance, cabinet, end_test, \
     choice_language, choice_language_ru, cabinet_ru, performance_ru, choice_language_en, performance_en, cabinet_en, \
-    vocabulary_test, grammar_test
+    vocabulary_test, grammar_test, back_main_menu_en
 
 
 async def main_menu_buttons(chat_id: int):
@@ -57,5 +57,6 @@ async def test_performance_menu_button(test: dict):
         design.append([end_test])
     return ReplyKeyboardMarkup(keyboard=design, resize_keyboard=True)
 
+
 async def tests_button():
-    return ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[vocabulary_test, grammar_test]])
+    return ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[vocabulary_test, grammar_test], [back_main_menu_en]])

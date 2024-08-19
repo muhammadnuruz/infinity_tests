@@ -14,7 +14,7 @@ from bot.dispatcher import dp
 
 
 async def get_test(category_id: str, words: list):
-    category = json.loads(requests.get(url=f"http://127.0.0.1:8002/api/categories/detail/{category_id}").content)
+    category = json.loads(requests.get(url=f"http://127.0.0.1:8000/api/categories/detail/{category_id}").content)
     used_words = set(words)
     while True:
         num = random.randint(0, category['words_count'] - 1)
@@ -22,7 +22,7 @@ async def get_test(category_id: str, words: list):
         if word_id not in used_words:
             break
     word = category['words'][num]
-    word = json.loads(requests.get(url=f"http://127.0.0.1:8002/api/words/detail/{word['id']}").content)
+    word = json.loads(requests.get(url=f"http://127.0.0.1:8000/api/words/detail/{word['id']}").content)
     return word, category
 
 
@@ -56,7 +56,7 @@ async def test_performance_function_3(call: types.CallbackQuery, state: FSMConte
     async with state.proxy() as data:
         await call.message.delete()
         tg_user = json.loads(
-            requests.get(url=f"http://127.0.0.1:8002/api/telegram-users/chat_id/{call.from_user.id}/").content)
+            requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
         if tg_user['language'] == 'uz':
             await call.message.answer(
                 text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {data['correct_answers'] / (data['word_number'] - 1) * 100}",
@@ -82,7 +82,7 @@ async def test_performance_function_4(call: types.CallbackQuery, state: FSMConte
         if data['word_number'] == data['words_count']:
             await call.message.delete()
             tg_user = json.loads(
-                requests.get(url=f"http://127.0.0.1:8002/api/telegram-users/chat_id/{call.from_user.id}/").content)
+                requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
             if tg_user['language'] == 'uz':
                 await call.message.answer(
                     text=f"Siz barcha testni tugatdingiz 🎉\n\nSiz to'plagan ball: {data['correct_answers'] / data['words_count'] * 100}",
