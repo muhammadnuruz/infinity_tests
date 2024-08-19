@@ -9,7 +9,7 @@ from aiogram.dispatcher.filters import Text
 @dp.message_handler(Text(equals=[performance, performance_ru, performance_en]))
 async def test_performance_function(msg: types.Message):
     if performance == msg.text:
-        await msg.answer(text="", reply_markup=await tests_button())
+        await msg.answer(text="Qaysi yo'nalishda test yechmoxchisiz?", reply_markup=await tests_button())
     elif performance_en == msg.text:
         await msg.answer(text="In which field do you test?", reply_markup=await tests_button())
     else:
