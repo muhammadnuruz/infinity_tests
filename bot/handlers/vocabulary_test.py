@@ -7,10 +7,40 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.types import ReplyKeyboardRemove
 
-from bot.buttons.inline_buttons import category_button, test_button
+from bot.buttons.inline_buttons import category_button, test_button, channel_button
 from bot.buttons.reply_buttons import main_menu_buttons
 from bot.buttons.text import end_test, vocabulary_test
 from bot.dispatcher import dp
+
+CHANNEL_ID = '-1002232778333'
+
+
+async def is_subscribed(user_id: int) -> bool:
+    chat_member = await dp.bot.get_chat_member(chat_id=CHANNEL_ID, user_id=user_id)
+    return chat_member.status in ['member', 'administrator', 'creator']
+
+
+@dp.callback_query_handler(Text("✅"), state="*")
+async def test_performance_function_3(call: types.CallbackQuery, state: FSMContext):
+    async with state.proxy() as data:
+        await call.message.delete()
+        tg_user = json.loads(
+            requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
+        if tg_user['language'] == 'uz':
+            await call.message.answer(
+                text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
+                reply_markup=await main_menu_buttons(call.from_user.id))
+        elif tg_user['language'] == 'ru':
+            await call.message.answer(
+                text=f"Вы прошли тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
+                reply_markup=await main_menu_buttons(call.from_user.id)
+            )
+        else:
+            await call.message.answer(
+                text=f"You have completed the test 🎉\n\nYour score is: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
+                reply_markup=await main_menu_buttons(call.from_user.id)
+            )
+        await state.finish()
 
 
 async def get_test(category_id: str, words: list):
@@ -57,21 +87,32 @@ async def test_performance_function_3(call: types.CallbackQuery, state: FSMConte
         await call.message.delete()
         tg_user = json.loads(
             requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
-        if tg_user['language'] == 'uz':
-            await call.message.answer(
-                text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
-                reply_markup=await main_menu_buttons(call.from_user.id))
-        elif tg_user['language'] == 'ru':
-            await call.message.answer(
-                text=f"Вы прошли тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
-                reply_markup=await main_menu_buttons(call.from_user.id)
-            )
+        if await is_subscribed(call.from_user.id):
+            if tg_user['language'] == 'uz':
+                await call.message.answer(
+                    text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
+                    reply_markup=await main_menu_buttons(call.from_user.id))
+            elif tg_user['language'] == 'ru':
+                await call.message.answer(
+                    text=f"Вы прошли тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
+                    reply_markup=await main_menu_buttons(call.from_user.id)
+                )
+            else:
+                await call.message.answer(
+                    text=f"You have completed the test 🎉\n\nYour score is: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
+                    reply_markup=await main_menu_buttons(call.from_user.id)
+                )
+            await state.finish()
         else:
-            await call.message.answer(
-                text=f"You have completed the test 🎉\n\nYour score is: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
-                reply_markup=await main_menu_buttons(call.from_user.id)
-            )
-        await state.finish()
+            if tg_user['language'] == 'uz':
+                await call.message.answer(text="Natijangizni bilish uchun bizni kanalga obuna bo'ling 😊",
+                                          reply_markup=await channel_button())
+            elif tg_user['language'] == 'ru':
+                await call.message.answer(text="Подпишитесь на наш канал, чтобы узнать свой результат 😊",
+                                          reply_markup=await channel_button())
+            else:
+                await call.message.answer(text="Subscribe to our channel to know your result 😊",
+                                          reply_markup=await channel_button())
 
 
 @dp.callback_query_handler(state="test_performance")
@@ -80,24 +121,34 @@ async def test_performance_function_4(call: types.CallbackQuery, state: FSMConte
         if call.data == data['correct_answer']:
             data['correct_answers'] = data['correct_answers'] + 1
         if data['word_number'] == data['words_count']:
-            await call.message.delete()
             tg_user = json.loads(
                 requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
-            if tg_user['language'] == 'uz':
-                await call.message.answer(
-                    text=f"Siz barcha testni tugatdingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / data['words_count'] * 100)}",
-                    reply_markup=await main_menu_buttons(call.from_user.id))
-            elif tg_user['language'] == 'ru':
-                await call.message.answer(
-                    text=f"Вы прошли весь тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / data['words_count'] * 100)}",
-                    reply_markup=await main_menu_buttons(call.from_user.id)
-                )
+            if await is_subscribed(call.from_user.id):
+                if tg_user['language'] == 'uz':
+                    await call.message.answer(
+                        text=f"Siz barcha testni tugatdingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / data['words_count'] * 100)}",
+                        reply_markup=await main_menu_buttons(call.from_user.id))
+                elif tg_user['language'] == 'ru':
+                    await call.message.answer(
+                        text=f"Вы прошли весь тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / data['words_count'] * 100)}",
+                        reply_markup=await main_menu_buttons(call.from_user.id)
+                    )
+                else:
+                    await call.message.answer(
+                        text=f"You have completed all tests 🎉\n\nYour score is: {int(data['correct_answers'] / data['words_count'] * 100)}",
+                        reply_markup=await main_menu_buttons(call.from_user.id)
+                    )
+                await state.finish()
             else:
-                await call.message.answer(
-                    text=f"You have completed all tests 🎉\n\nYour score is: {int(data['correct_answers'] / data['words_count'] * 100)}",
-                    reply_markup=await main_menu_buttons(call.from_user.id)
-                )
-            await state.finish()
+                if tg_user['language'] == 'uz':
+                    await call.message.answer(text="Natijangizni bilish uchun bizni kanalga obuna bo'ling 😊",
+                                              reply_markup=await channel_button())
+                elif tg_user['language'] == 'ru':
+                    await call.message.answer(text="Подпишитесь на наш канал, чтобы узнать свой результат 😊",
+                                              reply_markup=await channel_button())
+                else:
+                    await call.message.answer(text="Subscribe to our channel to know your result 😊",
+                                              reply_markup=await channel_button())
         else:
             word, category = await get_test(category_id=data['category_id'], words=data['words'])
             data['word_number'] = data['word_number'] + 1
@@ -107,3 +158,4 @@ async def test_performance_function_4(call: types.CallbackQuery, state: FSMConte
             await call.message.answer_photo(photo=open(word['word']['image'][22:], 'rb'),
                                             caption=f"Test {data['word_number']}\n\nFind the name of this {str.lower(category['name'])} 👆",
                                             reply_markup=await test_button(words=word))
+        await call.message.delete()

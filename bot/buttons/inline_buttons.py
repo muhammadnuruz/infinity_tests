@@ -38,3 +38,11 @@ async def test_button(words: dict):
     random.shuffle(design)
     design.append([InlineKeyboardButton(text=end_test, callback_data=end_test)])
     return InlineKeyboardMarkup(inline_keyboard=design)
+
+async def channel_button():
+    design = [
+        [InlineKeyboardButton(text="Infinity Global News", url="https://t.me/infinity_global_news")],
+        [InlineKeyboardButton(text="✅", callback_data='✅')],
+        [InlineKeyboardButton(text=back_main_menu_en, callback_data=back_main_menu_en)]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=design)
