@@ -18,7 +18,7 @@ async def language_buttons():
 
 
 async def category_button(lang: str):
-    categories = json.loads(requests.get(url="http://127.0.0.1:8002/api/categories").content)
+    categories = json.loads(requests.get(url="http://127.0.0.1:8000/api/categories").content)
     design = []
     for category in categories['results']:
         design.append([InlineKeyboardButton(text=category['name'], callback_data=category['id'])])
