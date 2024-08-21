@@ -59,16 +59,16 @@ async def test_performance_function_3(call: types.CallbackQuery, state: FSMConte
             requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
         if tg_user['language'] == 'uz':
             await call.message.answer(
-                text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {data['correct_answers'] / (data['word_number'] - 1) * 100}",
+                text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
                 reply_markup=await main_menu_buttons(call.from_user.id))
         elif tg_user['language'] == 'ru':
             await call.message.answer(
-                text=f"Вы прошли тест 🎉\n\nВаша оценка: {data['correct_answers'] / (data['word_number'] - 1) * 100}",
+                text=f"Вы прошли тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
                 reply_markup=await main_menu_buttons(call.from_user.id)
             )
         else:
             await call.message.answer(
-                text=f"You have completed the test 🎉\n\nYour score is: {data['correct_answers'] / (data['word_number'] - 1) * 100}",
+                text=f"You have completed the test 🎉\n\nYour score is: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
                 reply_markup=await main_menu_buttons(call.from_user.id)
             )
         await state.finish()
@@ -85,16 +85,16 @@ async def test_performance_function_4(call: types.CallbackQuery, state: FSMConte
                 requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
             if tg_user['language'] == 'uz':
                 await call.message.answer(
-                    text=f"Siz barcha testni tugatdingiz 🎉\n\nSiz to'plagan ball: {data['correct_answers'] / data['words_count'] * 100}",
+                    text=f"Siz barcha testni tugatdingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / data['words_count'] * 100)}",
                     reply_markup=await main_menu_buttons(call.from_user.id))
             elif tg_user['language'] == 'ru':
                 await call.message.answer(
-                    text=f"Вы прошли весь тест 🎉\n\nВаша оценка: {data['correct_answers'] / data['words_count'] * 100}",
+                    text=f"Вы прошли весь тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / data['words_count'] * 100)}",
                     reply_markup=await main_menu_buttons(call.from_user.id)
                 )
             else:
                 await call.message.answer(
-                    text=f"You have completed all tests 🎉\n\nYour score is: {data['correct_answers'] / data['words_count'] * 100}",
+                    text=f"You have completed all tests 🎉\n\nYour score is: {int(data['correct_answers'] / data['words_count'] * 100)}",
                     reply_markup=await main_menu_buttons(call.from_user.id)
                 )
             await state.finish()
