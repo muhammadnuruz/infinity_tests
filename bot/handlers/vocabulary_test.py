@@ -154,7 +154,6 @@ async def test_performance_function_4(call: types.CallbackQuery, state: FSMConte
             data['word_number'] = data['word_number'] + 1
             data['words'].append(word['word']['id'])
             data['correct_answer'] = word['word']['name']
-            await call.message.delete()
             await call.message.answer_photo(photo=open(word['word']['image'][22:], 'rb'),
                                             caption=f"Test {data['word_number']}\n\nFind the name of this {str.lower(category['name'])} 👆",
                                             reply_markup=await test_button(words=word))
