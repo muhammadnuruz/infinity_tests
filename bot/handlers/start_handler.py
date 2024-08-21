@@ -10,7 +10,6 @@ from bot.buttons.reply_buttons import main_menu_buttons
 from bot.buttons.text import back_main_menu, choice_language, choice_language_ru, back_main_menu_ru, back_main_menu_en, \
     choice_language_en
 from bot.dispatcher import dp, bot
-from bot.handlers import is_subscribed
 from main import admins
 
 
@@ -141,37 +140,3 @@ async def language_function_1(call: types.CallbackQuery, state: FSMContext):
                                   reply_markup=await main_menu_buttons(call.from_user.id))
     else:
         await call.message.answer(text="Язык изменен 🇷🇺", reply_markup=await main_menu_buttons(call.from_user.id))
-
-
-@dp.callback_query_handler(Text("✅"), state="*")
-async def test_performance_function_3(call: types.CallbackQuery, state: FSMContext):
-    tg_user = json.loads(
-        requests.get(url=f"http://127.0.0.1:8000/api/telegram-users/chat_id/{call.from_user.id}/").content)
-    await call.message.delete()
-    async with state.proxy() as data:
-        if await is_subscribed(call.from_user.id):
-            if tg_user['language'] == 'uz':
-                await call.message.answer(
-                    text=f"Siz testni yakunladingiz 🎉\n\nSiz to'plagan ball: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
-                    reply_markup=await main_menu_buttons(call.from_user.id))
-            elif tg_user['language'] == 'ru':
-                await call.message.answer(
-                    text=f"Вы прошли тест 🎉\n\nВаша оценка: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
-                    reply_markup=await main_menu_buttons(call.from_user.id)
-                )
-            else:
-                await call.message.answer(
-                    text=f"You have completed the test 🎉\n\nYour score is: {int(data['correct_answers'] / (data['word_number'] - 1) * 100)}",
-                    reply_markup=await main_menu_buttons(call.from_user.id)
-                )
-        else:
-            if tg_user['language'] == 'uz':
-                await call.message.answer(text="Natijangizni bilish uchun bizni kanalga obuna bo'ling 😊",
-                                          reply_markup=await channel_button())
-            elif tg_user['language'] == 'ru':
-                await call.message.answer(text="Подпишитесь на наш канал, чтобы узнать свой результат 😊",
-                                          reply_markup=await channel_button())
-            else:
-                await call.message.answer(text="Subscribe to our channel to know your result 😊",
-                                          reply_markup=await channel_button())
-        await state.finish()
